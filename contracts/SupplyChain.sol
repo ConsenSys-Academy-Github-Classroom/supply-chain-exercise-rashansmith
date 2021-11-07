@@ -5,7 +5,7 @@ pragma solidity >=0.5.16 <0.9.0;
 contract SupplyChain {
 
   // <owner>
-  address public owner = msg.sender;
+  address public owner;
 
   // <skuCount>
   uint public skuCount;
@@ -85,26 +85,26 @@ contract SupplyChain {
 
   // modifier forSale
   modifier forSale(uint sku) {
-    _;
     require((items[sku].seller != address(0)) && (items[sku].state == State.ForSale), "Item is not for sale");
+    _;
   }
 
   // modifier sold(uint _sku) 
   modifier sold(uint sku) {
-    _;
     require((items[sku].state == State.Sold), "Item hasnt been sold");
+    _;
   }
 
   // modifier shipped(uint _sku) 
   modifier shipped(uint sku) {
-    _;
     require((items[sku].state == State.Shipped), "Item has not been shipped");
+    _;
   }
 
   // modifier received(uint _sku) 
   modifier recieved(uint sku) {
-    _;
     require((items[sku].state == State.Received), "Item has not been received");
+    _;
   }
 
   constructor() public {
@@ -145,11 +145,10 @@ contract SupplyChain {
   //    - check the value after the function is called to make 
   //      sure the buyer is refunded any excess ether sent. 
   // 6. call the event associated with this function!
-  function buyItem(uint sku) payable public forSale(sku) paidEnough(items[sku].price) checkValue(sku) {
-    //address payable buyer = items[sku].buyer;
-    //address payable seller =  payable(items[sku].seller);
-    items[sku].buyer = payable(msg.sender);
+  function buyItem(uint sku) payable public forSale(sku) paidEnough(items[sku].price) checkValue(sku)  {
     items[sku].seller.transfer(items[sku].price);
+    items[sku].buyer = payable(msg.sender);
+
     items[sku].state = State.Sold;
     emit LogSold(sku); 
   }
