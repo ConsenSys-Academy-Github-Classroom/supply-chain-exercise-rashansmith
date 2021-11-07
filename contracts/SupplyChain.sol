@@ -125,8 +125,8 @@ contract SupplyChain {
     sku: skuCount, 
     price: _price, 
     state: State.ForSale, 
-    seller: msg.sender, 
-    buyer: address(0)
+    seller: payable(msg.sender), 
+    buyer: payable(address(0))
   });
 
   skuCount = skuCount + 1;
@@ -148,10 +148,9 @@ contract SupplyChain {
   function buyItem(uint sku) payable public forSale(sku) paidEnough(items[sku].price) checkValue(sku) {
     //address payable buyer = items[sku].buyer;
     //address payable seller =  payable(items[sku].seller);
-    items[sku].buyer = msg.sender;
+    items[sku].buyer = payable(msg.sender);
     items[sku].seller.transfer(items[sku].price);
     items[sku].state = State.Sold;
-
     emit LogSold(sku); 
   }
   // 1. Add modifiers to check:
